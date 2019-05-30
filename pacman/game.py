@@ -21,6 +21,7 @@ import util
 import time
 import traceback
 import sys
+import emotion_detector
 
 
 #######################
@@ -603,7 +604,7 @@ class Game:
     """The Game manages the control flow, soliciting actions from agents."""
 
     def __init__(self, agents, display, rules, starting_index=0,
-                 mute_agents=False, catch_exceptions=False):
+                 mute_agents=False, catch_exceptions=False, emotion_detection=False):
         """Create game instance with given agents, display, rules, etc."""
         self.agent_crashed = False
         self.agents = agents
@@ -619,6 +620,14 @@ class Game:
         self.agent_timeout = False
         import io
         self.agent_output = [io.StringIO() for agent in agents]
+
+        if emotion_detection:
+            self.emotion_detector = emotion_detector.EmotionDetector(False)
+            # warm up call
+            self.emotion_detector.predict()
+        else:
+            self.emotion_detector = None
+
 
     def get_progress(self):
         """Get progress of current game."""
@@ -705,6 +714,10 @@ class Game:
         num_agents = len(self.agents)
 
         while not self.game_over:
+            if self.emotion_detector is not None and agent_index == self.starting_index:
+                print(self.emotion_detector.predict())
+
+
             # Fetch the next agent
             agent = self.agents[agent_index]
             move_time = 0
@@ -845,3 +858,5 @@ class Game:
                     self.unmute()
                     return
         self.display.finish()
+        if self.emotion_detector:
+            self.emotion_detector.close()

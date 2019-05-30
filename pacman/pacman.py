@@ -295,12 +295,12 @@ class ClassicGameRules:
         self.timeout = timeout
 
     def new_game(self, layout, pacman_agent, ghost_agents, display,
-                 quiet=False, catch_exceptions=False):
+                 quiet=False, catch_exceptions=False, emotion_detection=False):
         """Generate a new game."""
         agents = [pacman_agent] + ghost_agents[:layout.get_num_ghosts()]
         init_state = GameState()
         init_state.initialize(layout, len(ghost_agents))
-        game = Game(agents, display, self, catch_exceptions=catch_exceptions)
+        game = Game(agents, display, self, catch_exceptions=catch_exceptions, emotion_detection=emotion_detection)
         game.state = init_state
         self.initial_state = init_state.deep_copy()
         self.quiet = quiet
@@ -608,6 +608,9 @@ def read_command(argv):
     parser.add_option('--timeout', dest='timeout', type='int',
                       help=default('Maximum length of time an agent can spend'
                                    'computing in a single game'), default=30)
+    parser.add_option('-e', '--emotion_detection', action='store_true',
+                      dest='emotion_detection',
+                      help='Turns on emotion detection', default=False)
 
     options, otherjunk = parser.parse_args(argv)
     if len(otherjunk) != 0:
@@ -675,6 +678,8 @@ def read_command(argv):
         replay_game(**recorded)
         sys.exit(0)
 
+    args['emotion_detection'] = options.emotion_detection
+
     return args
 
 
@@ -733,7 +738,7 @@ def replay_game(layout, actions, display):
 
 
 def run_games(layout, pacman, ghosts, display, num_games, record,
-              num_training=0, catch_exceptions=False, timeout=30):
+              num_training=0, catch_exceptions=False, timeout=30, emotion_detection=False):
     """Run the games; main execution loop when called from command line."""
     import __main__
     __main__.__dict__['_display'] = display
@@ -752,7 +757,7 @@ def run_games(layout, pacman, ghosts, display, num_games, record,
             game_display = display
             rules.quiet = False
         game = rules.new_game(layout, pacman, ghosts, game_display, be_quiet,
-                              catch_exceptions)
+                              catch_exceptions, emotion_detection)
         game.run()
         if not be_quiet:
             games.append(game)
