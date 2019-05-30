@@ -39,8 +39,8 @@ class KeyboardAgent(Agent):
         super().__init__(index)
         self.last_move = Directions.STOP
         self.keys = []
-        self.INVERT_RL_CONTROLS = False
-        self.INVERT_TD_CONTROLS = False
+        self.invert_right_left_controls = False
+        self.invert_up_down_controls = False
 
     def get_action(self, state):
         """Get action from the keyboard."""
@@ -71,7 +71,7 @@ class KeyboardAgent(Agent):
         """Get move from keys and legal actions."""
         move = Directions.STOP
 
-        if not self.INVERT_RL_CONTROLS:
+        if not self.invert_right_left_controls:
             if ((self.WEST_KEY in self.keys or 'Left' in self.keys) and
                     Directions.WEST in legal):
                 move = Directions.WEST
@@ -86,7 +86,7 @@ class KeyboardAgent(Agent):
                     Directions.WEST in legal):
                 move = Directions.WEST
 
-        if not self.INVERT_TD_CONTROLS:
+        if not self.invert_up_down_controls:
             if ((self.NORTH_KEY in self.keys or 'Up' in self.keys) and
                     Directions.NORTH in legal):
                 move = Directions.NORTH
