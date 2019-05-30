@@ -39,6 +39,8 @@ class KeyboardAgent(Agent):
         super().__init__(index)
         self.last_move = Directions.STOP
         self.keys = []
+        self.INVERT_RL_CONTROLS = False
+        self.INVERT_TD_CONTROLS = False
 
     def get_action(self, state):
         """Get action from the keyboard."""
@@ -68,18 +70,37 @@ class KeyboardAgent(Agent):
     def get_move(self, legal):
         """Get move from keys and legal actions."""
         move = Directions.STOP
-        if ((self.WEST_KEY in self.keys or 'Left' in self.keys) and
-                Directions.WEST in legal):
-            move = Directions.WEST
-        if ((self.EAST_KEY in self.keys or 'Right' in self.keys) and
-                Directions.EAST in legal):
-            move = Directions.EAST
-        if ((self.NORTH_KEY in self.keys or 'Up' in self.keys) and
-                Directions.NORTH in legal):
-            move = Directions.NORTH
-        if ((self.SOUTH_KEY in self.keys or 'Down' in self.keys) and
-                Directions.SOUTH in legal):
-            move = Directions.SOUTH
+
+        if not self.INVERT_RL_CONTROLS:
+            if ((self.WEST_KEY in self.keys or 'Left' in self.keys) and
+                    Directions.WEST in legal):
+                move = Directions.WEST
+            if ((self.EAST_KEY in self.keys or 'Right' in self.keys) and
+                    Directions.EAST in legal):
+                move = Directions.EAST
+        else:
+            if ((self.WEST_KEY in self.keys or 'Left' in self.keys) and
+                    Directions.EAST in legal):
+                move = Directions.EAST
+            if ((self.EAST_KEY in self.keys or 'Right' in self.keys) and
+                    Directions.WEST in legal):
+                move = Directions.WEST
+
+        if not self.INVERT_TD_CONTROLS:
+            if ((self.NORTH_KEY in self.keys or 'Up' in self.keys) and
+                    Directions.NORTH in legal):
+                move = Directions.NORTH
+            if ((self.SOUTH_KEY in self.keys or 'Down' in self.keys) and
+                    Directions.SOUTH in legal):
+                move = Directions.SOUTH
+        else:
+            if ((self.NORTH_KEY in self.keys or 'Up' in self.keys) and
+                    Directions.SOUTH in legal):
+                move = Directions.SOUTH
+            if ((self.SOUTH_KEY in self.keys or 'Down' in self.keys) and
+                    Directions.NORTH in legal):
+                move = Directions.NORTH
+
         return move
 
 
