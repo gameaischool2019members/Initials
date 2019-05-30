@@ -39,8 +39,8 @@ class KeyboardAgent(Agent):
         super().__init__(index)
         self.last_move = Directions.STOP
         self.keys = []
-        self.INVERT_RL_CONTROLS = True
-        self.INVERT_TD_CONTROLS = True
+        self.INVERT_RL_CONTROLS = False
+        self.INVERT_TD_CONTROLS = False
 
     def get_action(self, state):
         """Get action from the keyboard."""
