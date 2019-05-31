@@ -300,7 +300,7 @@ class PacmanGraphics:
         screen_height = 2 * self.grid_size + grid_height + INFO_PANE_HEIGHT
 
         gu.begin_graphics(screen_width, screen_height, BACKGROUND_COLOR,
-                          "CSI-480 Pacman")
+                          "Pacman")
 
     def draw_pacman(self, pacman, index):
         """Draw pacman on screen."""

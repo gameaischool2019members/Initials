@@ -53,7 +53,7 @@ import layout
 import sys
 import random
 import os
-
+import speeds
 
 ###################################################
 # YOUR INTERFACE TO THE PACMAN WORLD: A GameState #
@@ -365,7 +365,7 @@ class PacmanRules:
     This is used for classic pacman.
     """
 
-    PACMAN_SPEED = 1
+
 
     @staticmethod
     def get_legal_actions(state):
@@ -386,7 +386,7 @@ class PacmanRules:
         pacman_state = state.data.agent_states[0]
 
         # Update Configuration
-        vector = Actions.direction_to_vector(action, PacmanRules.PACMAN_SPEED)
+        vector = Actions.direction_to_vector(action, speeds.PACMAN_SPEED)
         pacman_state.configuration = \
             pacman_state.configuration.generate_successor(vector)
 
@@ -424,8 +424,6 @@ class PacmanRules:
 class GhostRules:
     """These functions dictate how ghosts interact with their environment."""
 
-    GHOST_SPEED = 1.0
-
     @staticmethod
     def get_legal_actions(state, ghost_index):
         """Return list of legal actions for specified ghost in specified state.
@@ -435,7 +433,7 @@ class GhostRules:
         """
         conf = state.get_ghost_state(ghost_index).configuration
         possible_actions = Actions.get_possible_actions(
-            conf, state.data.layout.walls)
+            conf, state.data.layout.walls, speeds.GHOST_SPEED)
         reverse = Actions.reverse_direction(conf.direction)
         if Directions.STOP in possible_actions:
             possible_actions.remove(Directions.STOP)
@@ -454,7 +452,7 @@ class GhostRules:
             raise IllegalActionError("Illegal ghost action " + str(action))
 
         ghost_state = state.data.agent_states[ghost_index]
-        speed = GhostRules.GHOST_SPEED
+        speed = speeds.GHOST_SPEED
         if ghost_state.scared_timer > 0:
             speed /= 2.0
         vector = Actions.direction_to_vector(action, speed)

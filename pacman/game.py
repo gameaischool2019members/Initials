@@ -22,8 +22,8 @@ import time
 import traceback
 import sys
 import emotion_detector
+import speeds
 import random
-
 
 #######################
 # Parts worth reading #
@@ -401,7 +401,7 @@ class Actions:
         return (dx * speed, dy * speed)
 
     @staticmethod
-    def get_possible_actions(config, walls):
+    def get_possible_actions(config, walls, speed=1.0):
         """Return possible actions from given config and walls position."""
         possible = []
         x, y = config.position
@@ -413,10 +413,27 @@ class Actions:
 
         for dir, vec in Actions._directions_as_list:
             dx, dy = vec
-            next_y = y_int + dy
-            next_x = x_int + dx
-            if not walls[next_x][next_y]:
-                possible.append(dir)
+            next_y = y_int + int(dy * speed)
+            next_x = x_int + int(dx * speed)
+            try:
+                min_x_move = min(x_int + dx, next_x)
+                max_x_move = max(x_int + dx, next_x)
+                min_y_move = min(y_int + dy, next_y)
+                max_y_move = max(y_int + dy, next_y)
+
+                valid = True
+
+                for test_x in range(min_x_move, max_x_move + 1):
+                    for test_y in range(min_y_move, max_y_move + 1):
+                        if walls[test_x][test_y]:
+                            valid = False
+
+                if valid:
+                    possible.append(dir)
+
+            except IndexError:
+                # not a valid move if out of range, so just pass
+                pass
 
         return possible
 
@@ -716,7 +733,14 @@ class Game:
 
         while not self.game_over:
             if self.emotion_detector is not None and agent_index == self.starting_index:
-                print(self.emotion_detector.predict())
+                predictions = self.emotion_detector.predict()
+                print(predictions.argmax(), predictions)
+                if predictions.argmax() != 3:
+                    print("not happy!")
+                    speeds.GHOST_SPEED = 2
+                else:
+                    speeds.GHOST_SPEED = 1
+
 
 
             # Fetch the next agent
