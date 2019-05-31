@@ -117,7 +117,8 @@ class EmotionDetector:
 
         elif self.async_result.ready():
             self.current_prediction, frame, face = self.async_result.get()
-            draw_stuff(self.current_prediction, frame, face)
+            if self.debug:
+                draw_stuff(self.current_prediction, frame, face)
             self.async_result = self.pool.apply_async(predict_helper)
 
         return self.current_prediction
