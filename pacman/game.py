@@ -23,7 +23,6 @@ import traceback
 import sys
 import emotion_detector
 
-#from ghost_agents import RandomGhost
 import speeds
 import random
 
@@ -734,21 +733,8 @@ class Game:
         agent_index = self.starting_index
         num_agents = len(self.agents)
 
-        counter = 0
-
         while not self.game_over:
-
-
-            # try to add a new ghost at a valid location
-            #if counter % 20 == 0:
-                #self.agents.append(RandomGhost)
-                #self.agent_positions.append((1, self.layout.get_random_legal_position))  # working here
-                #self.num_ghosts += 1
-            #counter += 1
-
-
-
-
+            
             # emotion detection code
             if self.emotion_detector is not None and agent_index == self.starting_index:
                 predictions = self.emotion_detector.predict()
@@ -759,6 +745,7 @@ class Game:
                 if predictions.argmax() != 3:
                     #print("not happy!")
                     speeds.GHOST_SPEED = 2
+
                 else:
                     speeds.GHOST_SPEED = 1
 
