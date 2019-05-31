@@ -26,7 +26,7 @@ import math
 from game import Directions
 import os
 import time
-
+import speeds
 
 DEFAULT_GRID_SIZE = 30.0
 INFO_PANE_HEIGHT = 35
@@ -134,7 +134,12 @@ class InfoPane:
 
     def update_score(self, score):
         """Update the score display."""
-        gu.change_text(self.score_text, "SCORE: % 4d" % score)
+        new_text = "SCORE: % 4d" % score
+        if speeds.GHOST_SPEED == 2.0:
+            new_text += "\t\t Be happy!"
+
+
+        gu.change_text(self.score_text, new_text)
 
     def set_team(self, is_blue):
         """Show the team name."""
