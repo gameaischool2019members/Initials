@@ -21,6 +21,7 @@ import util
 import time
 import traceback
 import sys
+import emotion_detector
 
 
 #######################
@@ -603,7 +604,7 @@ class Game:
     """The Game manages the control flow, soliciting actions from agents."""
 
     def __init__(self, agents, display, rules, starting_index=0,
-                 mute_agents=False, catch_exceptions=False):
+                 mute_agents=False, catch_exceptions=False, emotion_detection=False):
         """Create game instance with given agents, display, rules, etc."""
         self.agent_crashed = False
         self.agents = agents
@@ -619,6 +620,14 @@ class Game:
         self.agent_timeout = False
         import io
         self.agent_output = [io.StringIO() for agent in agents]
+
+        if emotion_detection:
+            self.emotion_detector = emotion_detector.EmotionDetector(False)
+            # warm up call
+            self.emotion_detector.predict()
+        else:
+            self.emotion_detector = None
+
 
     def get_progress(self):
         """Get progress of current game."""
@@ -705,6 +714,7 @@ class Game:
         num_agents = len(self.agents)
 
         while not self.game_over:
+<<<<<<< HEAD
 
 
             # get a random position
@@ -715,6 +725,10 @@ class Game:
             self.agents.append
             self.agent_positions.append((1, self.layout.get_random_legal_postiion))  # working here
             self.num_ghosts += 1
+=======
+            if self.emotion_detector is not None and agent_index == self.starting_index:
+                print(self.emotion_detector.predict())
+>>>>>>> 24d292e0ee1fd9713da9ae44da09a4576a1073a5
 
 
             # Fetch the next agent
@@ -857,3 +871,5 @@ class Game:
                     self.unmute()
                     return
         self.display.finish()
+        if self.emotion_detector:
+            self.emotion_detector.close()
