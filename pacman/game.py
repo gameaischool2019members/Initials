@@ -705,6 +705,18 @@ class Game:
         num_agents = len(self.agents)
 
         while not self.game_over:
+
+
+            # get a random position
+
+            # make sure the position is valid and not a wall (maybe start in center?)
+
+            # try to add a new ghost at a valid location
+            self.agents.append
+            self.agent_positions.append((1, self.layout.get_random_legal_postiion))  # working here
+            self.num_ghosts += 1
+
+
             # Fetch the next agent
             agent = self.agents[agent_index]
             move_time = 0
