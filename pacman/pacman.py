@@ -53,7 +53,7 @@ import layout
 import sys
 import random
 import os
-
+import speeds
 
 ###################################################
 # YOUR INTERFACE TO THE PACMAN WORLD: A GameState #
@@ -124,7 +124,7 @@ class GameState:
             GhostRules.decrement_timer(state.data.agent_states[agent_index])
 
         # Resolve multi-agent effects
-        GhostRules.check_death(state, agent_index)
+        GhostRules.check_death(self, state, agent_index)
 
         # Book keeping
         state.data._agent_moved = agent_index
@@ -365,7 +365,7 @@ class PacmanRules:
     This is used for classic pacman.
     """
 
-    PACMAN_SPEED = 1
+
 
     @staticmethod
     def get_legal_actions(state):
@@ -386,7 +386,7 @@ class PacmanRules:
         pacman_state = state.data.agent_states[0]
 
         # Update Configuration
-        vector = Actions.direction_to_vector(action, PacmanRules.PACMAN_SPEED)
+        vector = Actions.direction_to_vector(action, speeds.PACMAN_SPEED)
         pacman_state.configuration = \
             pacman_state.configuration.generate_successor(vector)
 
@@ -424,8 +424,6 @@ class PacmanRules:
 class GhostRules:
     """These functions dictate how ghosts interact with their environment."""
 
-    GHOST_SPEED = 1.0
-
     @staticmethod
     def get_legal_actions(state, ghost_index):
         """Return list of legal actions for specified ghost in specified state.
@@ -435,7 +433,7 @@ class GhostRules:
         """
         conf = state.get_ghost_state(ghost_index).configuration
         possible_actions = Actions.get_possible_actions(
-            conf, state.data.layout.walls)
+            conf, state.data.layout.walls, speeds.GHOST_SPEED)
         reverse = Actions.reverse_direction(conf.direction)
         if Directions.STOP in possible_actions:
             possible_actions.remove(Directions.STOP)
@@ -449,12 +447,15 @@ class GhostRules:
 
         :raise IllegalActionError if action is not legal.
         """
+
         legal = GhostRules.get_legal_actions(state, ghost_index)
         if action not in legal:
-            raise IllegalActionError("Illegal ghost action " + str(action))
+            # SUPER HACK, ignore illegal ghost actions
+            return 
+            #raise IllegalActionError("Illegal ghost action " + str(action))
 
         ghost_state = state.data.agent_states[ghost_index]
-        speed = GhostRules.GHOST_SPEED
+        speed = speeds.GHOST_SPEED
         if ghost_state.scared_timer > 0:
             speed /= 2.0
         vector = Actions.direction_to_vector(action, speed)
@@ -471,7 +472,7 @@ class GhostRules:
         ghost_state.scared_timer = max(0, timer - 1)
 
     @staticmethod
-    def check_death(state, agent_index):
+    def check_death(prev_state, state, agent_index):
         """Resolve multi-agent effects after specified agent moved."""
         pacman_position = state.get_pacman_position()
         if agent_index == 0:  # Pacman just moved; Anyone can kill him
@@ -482,9 +483,21 @@ class GhostRules:
                     GhostRules.collide(state, ghost_state, index)
         else:
             ghost_state = state.data.agent_states[agent_index]
+            prev_ghost_state = prev_state.data.agent_states[agent_index]
             ghost_position = ghost_state.configuration.get_position()
-            if GhostRules.can_kill(pacman_position, ghost_position):
-                GhostRules.collide(state, ghost_state, agent_index)
+            prev_ghost_position = prev_ghost_state.configuration.get_position()
+
+            min_x = min(ghost_position[0], prev_ghost_position[0])
+            max_x = max(ghost_position[0], prev_ghost_position[0])
+            min_y = min(ghost_position[1], prev_ghost_position[1])
+            max_y = max(ghost_position[1], prev_ghost_position[1])
+
+            for x in range(int(min_x), int(max_x + 1)):
+                for y in range(int(min_y), int(max_y + 1)):
+
+                    if GhostRules.can_kill(pacman_position, (x,y)):
+                        GhostRules.collide(state, ghost_state, agent_index)
+                        break
 
     @staticmethod
     def collide(state, ghost_state, agent_index):
