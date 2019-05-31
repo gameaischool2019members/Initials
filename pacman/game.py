@@ -22,6 +22,7 @@ import time
 import traceback
 import sys
 import emotion_detector
+import random
 
 
 #######################
@@ -811,6 +812,16 @@ class Game:
                     self.unmute()
                     return
             else:
+                if (agent_index == 0):
+                    variableName = round(random.uniform(0, 1), 2)
+                    if (variableName > 1):
+                        agent.invert_right_left_controls = True
+                        agent.invert_up_down_controls = True
+                        #print("INVERT CONTROLS")
+                    else:
+                        agent.invert_right_left_controls = False
+                        agent.invert_up_down_controls = False
+                        #print("FIX")
                 action = agent.get_action(observation)
             self.unmute()
 
