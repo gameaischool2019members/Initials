@@ -22,15 +22,11 @@ import time
 import traceback
 import sys
 import emotion_detector
-<<<<<<< HEAD
-<<<<<<< HEAD
+
 #from ghost_agents import RandomGhost
-=======
-=======
 import speeds
->>>>>>> 339a8b08634f645d78fdc22ec02a7cbfe2f40868
 import random
->>>>>>> ad991ffbfaf3619c8b86a368f5d4f7bf8589b26f
+
 
 #######################
 # Parts worth reading #
