@@ -734,9 +734,12 @@ class Game:
         while not self.game_over:
             if self.emotion_detector is not None and agent_index == self.starting_index:
                 predictions = self.emotion_detector.predict()
-                print(predictions.argmax(), predictions)
+                #print(predictions.argmax(), predictions)
+
+                print(emotion_detector.EMOTIONS[predictions.argmax()])
+
                 if predictions.argmax() != 3:
-                    print("not happy!")
+                    #print("not happy!")
                     speeds.GHOST_SPEED = 2
                 else:
                     speeds.GHOST_SPEED = 1
