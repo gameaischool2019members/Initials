@@ -22,6 +22,7 @@ import time
 import traceback
 import sys
 import emotion_detector
+#from ghost_agents import RandomGhost
 
 
 #######################
@@ -713,22 +714,24 @@ class Game:
         agent_index = self.starting_index
         num_agents = len(self.agents)
 
+        counter = 0
+
         while not self.game_over:
-<<<<<<< HEAD
 
-
-            # get a random position
-
-            # make sure the position is valid and not a wall (maybe start in center?)
 
             # try to add a new ghost at a valid location
-            self.agents.append
-            self.agent_positions.append((1, self.layout.get_random_legal_postiion))  # working here
-            self.num_ghosts += 1
-=======
+            #if counter % 20 == 0:
+                #self.agents.append(RandomGhost)
+                #self.agent_positions.append((1, self.layout.get_random_legal_position))  # working here
+                #self.num_ghosts += 1
+            #counter += 1
+
+
+
+
+            # emotion detection code
             if self.emotion_detector is not None and agent_index == self.starting_index:
                 print(self.emotion_detector.predict())
->>>>>>> 24d292e0ee1fd9713da9ae44da09a4576a1073a5
 
 
             # Fetch the next agent
